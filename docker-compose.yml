@@ -1,0 +1,55 @@
+version: "3"
+
+services:
+  rabbitmq:
+    container_name: rabbitmq
+    image: "rabbitmq:3.6.6-management"
+    tty: true
+    volumes:
+      - ./rabbitmq-data:/var/lib/rabbitmq/mnesia
+      - ./rabbitmq-data/logs:/var/log/rabbitmq
+    ports:
+      - "5672:15672"
+    expose:
+      # Opens port 3306 on the container
+      - "15672"
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "15672"]
+      interval: 5s
+      timeout: 15s
+      retries: 10
+    hostname: rabbitmq
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    restart: always
+    volumes:
+      - ./data/dev/mongo:/data/db
+    ports:
+      - "27017:27017"
+  api:
+    restart: always
+    container_name: hermes
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./backend
+    environment:
+      - PORT=8000
+      - MONGO_URI=mongodb://mongo:27017/hermes
+      - RABBITMQ_CONNECTION_STRING=amqp://rabbitmq:5672
+      - NODE_ENV=development
+
+    links:
+      - mongo
+      - rabbitmq
+
+    depends_on:
+      - mongo
+      - rabbitmq
+
+    volumes:
+      - /app/node_modules
+      - ./backend:/app
+    ports:
+      - "8000:8000"
