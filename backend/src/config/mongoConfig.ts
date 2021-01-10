@@ -1,13 +1,13 @@
 import dotenv from "dotenv"
 
-const result = dotenv.config();
+dotenv.config();
 
 let mongo_uri;
 
 if (process.env.NODE_ENV != "test") {
-  mongo_uri = result.parsed.MONGO_URI;
+  mongo_uri = process.env.MONGO_URI;
 } else {
-  mongo_uri = result.parsed.TEST_MONGO_URI;
+  mongo_uri = process.env.TEST_MONGO_URI;
 }
 
 const mongoConfig = {

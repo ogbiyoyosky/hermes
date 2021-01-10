@@ -32,10 +32,11 @@ services:
     restart: always
     container_name: hermes
     build:
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
       context: ./backend
     environment:
       - PORT=8000
+      - QUEUE=published_message
       - MONGO_URI=mongodb://mongo:27017/hermes
       - RABBITMQ_CONNECTION_STRING=amqp://rabbitmq:5672
       - NODE_ENV=development

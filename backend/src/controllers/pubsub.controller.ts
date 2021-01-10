@@ -86,6 +86,10 @@ class PublisherControler {
                return res.status(httpStatus.OK).send({
                  message: "Successfully subcribed",
                  status: "ok",
+                 data: {
+                  url,
+                  topic
+                },
                  status_code: httpStatus.OK,
                });
              }).catch(err=> {
